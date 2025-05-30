@@ -1,0 +1,47 @@
+// package grammar;
+
+// public interface Data<T> {
+
+// // Arithmetic
+// Data<?> add(Data<?> other);
+
+// Data<?> subtract(Data<?> other);
+
+// Data<?> multiply(Data<?> other);
+
+// Data<?> divide(Data<?> other);
+
+// Data<?> power(Data<?> other);
+
+// Data<?> modulo(Data<?> other);
+
+// // Comparisons
+// Data<Boolean> lessThan(Data<?> other);
+
+// Data<Boolean> lessThanOrEqualsTo(Data<?> other);
+
+// Data<Boolean> greaterThan(Data<?> other);
+
+// Data<Boolean> greaterThanOrEqualsTo(Data<?> other);
+
+// Data<Boolean> equalsTo(Data<?> other);
+
+// // Unary
+// Data<?> not();
+
+// Data<?> negative();
+
+// Data<?> positive();
+
+// Data<?> increment();
+
+// Data<?> decrement();
+
+// Data<?> length();
+
+// // Value
+// T getValue();
+
+// // To String
+// String toString();
+// }
