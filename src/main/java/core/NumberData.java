@@ -1,4 +1,4 @@
-package grammar;
+package core;
 
 public final class NumberData extends Data<Double> {
 

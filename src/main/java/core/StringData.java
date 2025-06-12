@@ -1,4 +1,4 @@
-package grammar;
+package core;
 
 public final class StringData extends Data<String> {
 

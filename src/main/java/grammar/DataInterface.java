@@ -1,5 +1,7 @@
 package grammar;
 
+import core.Data;
+
 public interface DataInterface<T> {
 
     // Arithmetic

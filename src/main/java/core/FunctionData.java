@@ -1,4 +1,4 @@
-package grammar;
+package core;
 
 import grammar.DecibelParser.FunctionContext;
 

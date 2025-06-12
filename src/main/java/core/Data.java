@@ -1,4 +1,6 @@
-package grammar;
+package core;
+
+import grammar.DataInterface;
 
 public abstract class Data<T> implements DataInterface<T> {
 
@@ -93,5 +95,13 @@ public abstract class Data<T> implements DataInterface<T> {
 
     public T getValue() {
         return value;
+    }
+
+    public ControlState getState() {
+        return state;
+    }
+
+    public void setState(ControlState state) {
+        this.state = state;
     }
 }

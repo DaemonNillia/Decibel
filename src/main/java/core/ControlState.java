@@ -1,4 +1,4 @@
-package grammar;
+package core;
 
 public enum ControlState {
     DEFAULT,

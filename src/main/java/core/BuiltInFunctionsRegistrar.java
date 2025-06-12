@@ -1,7 +1,9 @@
-package grammar;
+package core;
 
 import java.util.HashMap;
 import java.util.Scanner;
+
+import visitors.EvalVisitor;
 
 public class BuiltInFunctionsRegistrar extends EvalVisitor {
     public static Scanner scanner = new Scanner(System.in);

@@ -6,6 +6,7 @@ import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.*;
 
 import grammar.*;
+import visitors.EvalVisitor;
 
 //  TODO make base expressions act as print statements
 public class Main {

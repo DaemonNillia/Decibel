@@ -1,4 +1,4 @@
-package grammar;
+package visitors;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -7,6 +7,8 @@ import java.util.Stack;
 
 import org.antlr.v4.runtime.tree.RuleNode;
 
+import core.*;
+import grammar.*;
 import grammar.DecibelParser.*;
 
 //  FIXME: Make it so that functions + built in functions have a separate hashmap than variables
@@ -64,15 +66,17 @@ public class EvalVisitor extends DecibelParserBaseVisitor<Data<?>> {
 
         while (visit(ctx.expression()).isTruthy()) {
             ret = visit(ctx.block());
-            if (ret != null) {
-                if (ret.state == ControlState.BREAK) {
-                    ret.state = ControlState.DEFAULT;
+            switch (ret.getState()) {
+                case BREAK:
+                    ret.setState(ControlState.DEFAULT);
                     break;
-                } else if (ret.state == ControlState.CONTINUE) {
-                    ret.state = ControlState.DEFAULT;
-                    continue;
-                } else if (ret.state == ControlState.RETURN)
+                case CONTINUE:
+                    ret.setState(ControlState.DEFAULT);
+                    break;
+                case RETURN:
                     return ret;
+                case DEFAULT:
+                    break;
             }
         }
         return null;
@@ -86,15 +90,17 @@ public class EvalVisitor extends DecibelParserBaseVisitor<Data<?>> {
         for (visit(ctx.assignmentOrExpression(0)); visit(ctx.expression())
                 .isTruthy(); visit(ctx.assignmentOrExpression(1))) {
             ret = visit(ctx.block());
-            if (ret != null) {
-                if (ret.state == ControlState.BREAK) {
-                    ret.state = ControlState.DEFAULT;
+            switch (ret.getState()) {
+                case BREAK:
+                    ret.setState(ControlState.DEFAULT);
                     break;
-                } else if (ret.state == ControlState.CONTINUE) {
-                    ret.state = ControlState.DEFAULT;
-                    continue;
-                } else if (ret.state == ControlState.RETURN)
+                case CONTINUE:
+                    ret.setState(ControlState.DEFAULT);
+                    break;
+                case RETURN:
                     return ret;
+                case DEFAULT:
+                    break;
             }
         }
         return ret;
@@ -213,8 +219,7 @@ public class EvalVisitor extends DecibelParserBaseVisitor<Data<?>> {
             }
 
             data = visit(function.getValue().block());
-            if (data != null)
-                data.state = ControlState.DEFAULT;
+            data.setState(ControlState.DEFAULT);
             nameSpace.pop();
         }
         return data;
@@ -223,7 +228,7 @@ public class EvalVisitor extends DecibelParserBaseVisitor<Data<?>> {
     @Override
     protected boolean shouldVisitNextChild(RuleNode node, Data<?> currentResult) {
         if (currentResult != null) {
-            return (currentResult.state == ControlState.DEFAULT);
+            return (currentResult.getState() == ControlState.DEFAULT);
         }
         return true;
     }
@@ -231,7 +236,7 @@ public class EvalVisitor extends DecibelParserBaseVisitor<Data<?>> {
     @Override
     public Data<?> visitReturnStatment(ReturnStatmentContext ctx) {
         Data<?> data = visit(ctx.expression());
-        data.state = ControlState.RETURN;
+        data.setState(ControlState.RETURN);
         return data;
     }
 
@@ -241,7 +246,7 @@ public class EvalVisitor extends DecibelParserBaseVisitor<Data<?>> {
     @Override
     public Data<?> visitBreakStatement(BreakStatementContext ctx) {
         Data<?> data = new NumberData(null);
-        data.state = ControlState.BREAK;
+        data.setState(ControlState.BREAK);
         return data;
     }
 
@@ -251,7 +256,7 @@ public class EvalVisitor extends DecibelParserBaseVisitor<Data<?>> {
     @Override
     public Data<?> visitContinueStatement(ContinueStatementContext ctx) {
         Data<?> data = new NumberData(null);
-        data.state = ControlState.CONTINUE;
+        data.setState(ControlState.CONTINUE);
         return data;
     }
 

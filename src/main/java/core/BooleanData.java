@@ -1,4 +1,4 @@
-package grammar;
+package core;
 
 public final class BooleanData extends Data<Boolean> {
 
