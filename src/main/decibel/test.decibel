@@ -1,0 +1,36 @@
+// number = 10;
+// string = "this is a string";
+// list = [number, string];
+
+// function add(a, b) {
+//     return a + b;
+// }
+// a = 2;
+
+// for (i = 0; i < 10; i++) {
+//     print(i);
+// }
+
+function test() {
+    for (j = 0; j < 5; j++) {
+        for (i = 0; i < 5; i++) {
+            print(i);
+            test = input("number -> ");
+            if (test == "ten") {
+                continue;
+            } else if (test == "twelve") {
+                return 2;
+            } else {
+                print("neither 'ten' nor 'twelve'");
+            }
+            print("the rest of it");
+        }
+    }
+}
+
+function ret() {
+    a = test();
+    return 5;
+}
+
+print(ret()**2);

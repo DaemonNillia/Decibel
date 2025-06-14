@@ -19,7 +19,6 @@ WHILE                       :   'while'                         ;
 //  CONSTANTS
 TRUE                        :   'true'                          ;
 FALSE                       :   'false'                         ;
-BOOLEAN                     :   (TRUE | FALSE)                  ;
 
 //  LOGIC OPERATORS
 AND                         :   '&&' | 'and'                    ;
@@ -47,6 +46,10 @@ OPEN_BRACKET                :   '['                             ;
 CLOSE_BRACKET               :   ']'                             ;
 OPEN_CURLY                  :   '{'                             ;
 CLOSE_CURLY                 :   '}'                             ;
+
+//  INCREMENT OPERATORS
+INCREMENT                   :   '++'                            ;
+DECREMENT                   :   '--'                            ;
 
 //  ARITHMETIC OPERATORS
 MODULO                      :   '%'                             ;

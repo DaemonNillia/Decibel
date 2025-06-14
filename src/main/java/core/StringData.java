@@ -16,6 +16,14 @@ public final class StringData extends Data<String> {
     }
 
     @Override
+    public Data<Boolean> equalsTo(Data<?> other) {
+        return switch (other) {
+            case StringData s -> new BooleanData(getValue().equals(s.getValue()));
+            default -> throw new UnsupportedOperationException("Unsupported operation");
+        };
+    }
+
+    @Override
     public String toString() {
         return getValue();
     }

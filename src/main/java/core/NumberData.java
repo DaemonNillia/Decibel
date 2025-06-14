@@ -40,6 +40,14 @@ public final class NumberData extends Data<Double> {
     }
 
     @Override
+    public Data<?> power(Data<?> other) {
+        return switch (other) {
+            case NumberData n -> new NumberData(Math.pow(getValue(), n.getValue()));
+            default -> throw new UnsupportedOperationException("Unsupported operation");
+        };
+    }
+
+    @Override
     public Data<Boolean> lessThan(Data<?> other) {
         return switch (other) {
             case NumberData n -> new BooleanData(getValue() < n.getValue());
@@ -74,9 +82,19 @@ public final class NumberData extends Data<Double> {
     @Override
     public Data<Boolean> equalsTo(Data<?> other) {
         return switch (other) {
-            case NumberData n -> new BooleanData(getValue() == n.getValue());
+            case NumberData n -> new BooleanData(getValue().equals(n.getValue()));
             default -> throw new UnsupportedOperationException("Unsupported operation");
         };
+    }
+
+    @Override
+    public Data<?> increment() {
+        return new NumberData(getValue() + 1);
+    }
+
+    @Override
+    public Data<?> decrement() {
+        return new NumberData(getValue() - 1);
     }
 
     @Override

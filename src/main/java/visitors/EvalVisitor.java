@@ -32,7 +32,11 @@ public class EvalVisitor extends DecibelParserBaseVisitor<Data<?>> {
                 return scope.get(id);
             }
         }
-        return null;
+        return new NullData();
+    }
+
+    public void assign(String id, Data<?> data) {
+        nameSpace.peek().put(id, data);
     }
 
     // Assign a variable
@@ -40,8 +44,8 @@ public class EvalVisitor extends DecibelParserBaseVisitor<Data<?>> {
     public Data<?> visitAssignment(AssignmentContext ctx) {
         String id = ctx.IDENTIFIER().getText(); // name of the variable
         Data<?> data = visit(ctx.expression()); // value to assign
-        nameSpace.peek().put(id, data); // storing the value to the name
-        return null;
+        assign(id, data); // storing the value to the name
+        return new NullData();
     }
 
     // If statement
@@ -56,47 +60,51 @@ public class EvalVisitor extends DecibelParserBaseVisitor<Data<?>> {
                 return visit(ctx.if_());
             }
         }
-        return null;
+        return new NullData();
     }
 
     // While statement
     @Override
     public Data<?> visitWhile(WhileContext ctx) {
-        Data<?> ret = null;
+        Data<?> ret = new NullData();
 
-        while (visit(ctx.expression()).isTruthy()) {
-            ret = visit(ctx.block());
+        whileLabel: while (visit(ctx.expression()).isTruthy()) {
+            var block = visit(ctx.block());
+            ret = (block == null) ? new NullData() : block;
+
             switch (ret.getState()) {
                 case BREAK:
                     ret.setState(ControlState.DEFAULT);
-                    break;
+                    break whileLabel;
                 case CONTINUE:
                     ret.setState(ControlState.DEFAULT);
-                    break;
+                    continue whileLabel;
                 case RETURN:
                     return ret;
                 case DEFAULT:
                     break;
             }
         }
-        return null;
+        return new NullData();
     }
 
     // For statement
     @Override
     public Data<?> visitFor(ForContext ctx) {
-        Data<?> ret = null;
+        Data<?> ret = new NullData();
 
-        for (visit(ctx.assignmentOrExpression(0)); visit(ctx.expression())
+        forLabel: for (visit(ctx.assignmentOrExpression(0)); visit(ctx.expression())
                 .isTruthy(); visit(ctx.assignmentOrExpression(1))) {
-            ret = visit(ctx.block());
+            var block = visit(ctx.block());
+            ret = (block == null) ? new NullData() : block;
+
             switch (ret.getState()) {
                 case BREAK:
                     ret.setState(ControlState.DEFAULT);
-                    break;
+                    break forLabel;
                 case CONTINUE:
                     ret.setState(ControlState.DEFAULT);
-                    break;
+                    continue forLabel;
                 case RETURN:
                     return ret;
                 case DEFAULT:
@@ -119,8 +127,8 @@ public class EvalVisitor extends DecibelParserBaseVisitor<Data<?>> {
     }
 
     @Override
-    public BooleanData visitBooleanExpression(BooleanExpressionContext ctx) {
-        Boolean bool = Boolean.parseBoolean(ctx.BOOLEAN().getText());
+    public Data<?> visitBoolean(BooleanContext ctx) {
+        Boolean bool = Boolean.parseBoolean(ctx.getText());
         return new BooleanData(bool);
     }
 
@@ -138,7 +146,7 @@ public class EvalVisitor extends DecibelParserBaseVisitor<Data<?>> {
             case DecibelLexer.NOT -> data.not();
             case DecibelLexer.ADD -> data;
             case DecibelLexer.SUBTRACT -> data.negative();
-            default -> null;
+            default -> new NullData();
         };
     }
 
@@ -153,7 +161,7 @@ public class EvalVisitor extends DecibelParserBaseVisitor<Data<?>> {
             case DecibelLexer.LESSER_THAN_OR_EQUAL_TO -> left.lessThanOrEqualsTo(right);
             case DecibelLexer.GREATER_THAN_OR_EQUAL_TO -> left.greaterThanOrEqualsTo(right);
             case DecibelLexer.EQUALS_TO -> left.equalsTo(right);
-            default -> null;
+            default -> new NullData();
         };
     }
 
@@ -166,7 +174,7 @@ public class EvalVisitor extends DecibelParserBaseVisitor<Data<?>> {
             case DecibelLexer.MULTIPLY -> left.multiply(right);
             case DecibelLexer.DIVIDE -> left.divide(right);
             case DecibelLexer.MODULO -> left.modulo(right);
-            default -> null;
+            default -> new NullData();
         };
     }
 
@@ -178,8 +186,15 @@ public class EvalVisitor extends DecibelParserBaseVisitor<Data<?>> {
         return switch (op) {
             case DecibelLexer.ADD -> left.add(right);
             case DecibelLexer.SUBTRACT -> left.subtract(right);
-            default -> null;
+            default -> new NullData();
         };
+    }
+
+    @Override
+    public Data<?> visitPowerExpression(PowerExpressionContext ctx) {
+        Data<?> left = visit(ctx.expression(0));
+        Data<?> right = visit(ctx.expression(1));
+        return left.power(right);
     }
 
     @Override
@@ -188,20 +203,20 @@ public class EvalVisitor extends DecibelParserBaseVisitor<Data<?>> {
     }
 
     @Override
-    public FunctionData visitFunction(FunctionContext ctx) {
+    public Data<?> visitFunction(FunctionContext ctx) {
         String id = ctx.IDENTIFIER().getText();
         if (!builtInFunctions.containsKey(id)) {
             FunctionData block = new FunctionData(ctx);
             nameSpace.peek().put(id, block);
             return block;
         }
-        return null;
+        return new NullData();
     }
 
     @Override
     public Data<?> visitCall(CallContext ctx) {
         String id = ctx.IDENTIFIER().getText();
-        Data<?> data = null;
+        Data<?> data = new NullData();
 
         if (builtInFunctions.containsKey(id)) {
             ArrayList<Data<?>> args = new ArrayList<>();
@@ -210,7 +225,7 @@ public class EvalVisitor extends DecibelParserBaseVisitor<Data<?>> {
             }
             data = builtInFunctions.get(id).call(args);
         } else {
-            FunctionData function = (FunctionData) findVariable(id);
+            var function = (FunctionData) findVariable(id);
 
             nameSpace.push(new HashMap<String, Data<?>>());
             for (int i = 0; i < function.getValue().formalParameters().IDENTIFIER().size(); i++) {
@@ -245,7 +260,7 @@ public class EvalVisitor extends DecibelParserBaseVisitor<Data<?>> {
     // FIXME: Redo the control flow system in general
     @Override
     public Data<?> visitBreakStatement(BreakStatementContext ctx) {
-        Data<?> data = new NumberData(null);
+        Data<?> data = new NullData();
         data.setState(ControlState.BREAK);
         return data;
     }
@@ -255,7 +270,7 @@ public class EvalVisitor extends DecibelParserBaseVisitor<Data<?>> {
     // FIXME: Redo the control flow system in general
     @Override
     public Data<?> visitContinueStatement(ContinueStatementContext ctx) {
-        Data<?> data = new NumberData(null);
+        Data<?> data = new NullData();
         data.setState(ControlState.CONTINUE);
         return data;
     }
@@ -290,5 +305,33 @@ public class EvalVisitor extends DecibelParserBaseVisitor<Data<?>> {
         String id = ctx.IDENTIFIER().getText();
         var list = (ListData) findVariable(id);
         return new NumberData((double) list.getValue().size());
+    }
+
+    @Override
+    public Data<?> visitPrefixIncrement(PrefixIncrementContext ctx) {
+        String id = ctx.IDENTIFIER().getText();
+        Data<?> data = findVariable(id);
+        var op = ctx.op.getType();
+        var incrementedData = switch (op) {
+            case DecibelLexer.INCREMENT -> data.increment();
+            case DecibelLexer.DECREMENT -> data.decrement();
+            default -> new NullData();
+        };
+        assign(id, incrementedData);
+        return incrementedData;
+    }
+
+    @Override
+    public Data<?> visitPostfixIncrement(PostfixIncrementContext ctx) {
+        String id = ctx.IDENTIFIER().getText();
+        Data<?> data = findVariable(id);
+        var op = ctx.op.getType();
+        var incrementedData = switch (op) {
+            case DecibelLexer.INCREMENT -> data.increment();
+            case DecibelLexer.DECREMENT -> data.decrement();
+            default -> new NullData();
+        };
+        assign(id, incrementedData);
+        return data;
     }
 }

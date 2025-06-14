@@ -34,7 +34,7 @@ tasks.register('Decibel', JavaExec) {
     description = 'Runs Decibel class'
     classpath = sourceSets.main.runtimeClasspath
     mainClass.set('test.Decibel')
-    args = ['src/main/grammarRules/test.decibel']
+    args = ['src/main/decibel/test.decibel']
     standardInput   = System.'in'
 }
 
@@ -58,5 +58,12 @@ task testGrammar(type: JavaExec) {
     description = "Tests the grammar"
     classpath   = sourceSets.main.runtimeClasspath
     mainClass   = 'org.antlr.v4.gui.TestRig'
-    args        = ['grammar.Decibel', 'program', 'src/main/grammarRules/test.decibel', '-tree', '-tokens']
+    args        = ['grammar.Decibel', 'program', 'src/main/decibel/test.decibel', '-tree', '-tokens']
+}
+task testGrammarGui(type: JavaExec) {
+    group       = "Decibel"
+    description = "Tests the grammar"
+    classpath   = sourceSets.main.runtimeClasspath
+    mainClass   = 'org.antlr.v4.gui.TestRig'
+    args        = ['grammar.Decibel', 'program', 'src/main/decibel/test.decibel', '-gui']
 }

@@ -7,6 +7,11 @@ public final class BooleanData extends Data<Boolean> {
     }
 
     @Override
+    public Data<?> not() {
+        return new BooleanData(!getValue());
+    }
+
+    @Override
     public Data<Boolean> equalsTo(Data<?> other) {
         return switch (other) {
             case BooleanData b -> new BooleanData(getValue() == b.getValue());

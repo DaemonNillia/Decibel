@@ -135,6 +135,13 @@ public interface DecibelParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitLogicalOrExpression(DecibelParser.LogicalOrExpressionContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code incrementExpression}
+	 * labeled alternative in {@link DecibelParser#expression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitIncrementExpression(DecibelParser.IncrementExpressionContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code lengthExpression}
 	 * labeled alternative in {@link DecibelParser#expression}.
 	 * @param ctx the parse tree
@@ -289,4 +296,28 @@ public interface DecibelParserVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitLength(DecibelParser.LengthContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link DecibelParser#increment}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitIncrement(DecibelParser.IncrementContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link DecibelParser#prefixIncrement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitPrefixIncrement(DecibelParser.PrefixIncrementContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link DecibelParser#postfixIncrement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitPostfixIncrement(DecibelParser.PostfixIncrementContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link DecibelParser#boolean}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitBoolean(DecibelParser.BooleanContext ctx);
 }

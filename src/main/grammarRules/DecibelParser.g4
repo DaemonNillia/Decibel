@@ -21,6 +21,7 @@ statement
     ;
 expression
     :   '(' expression ')'                                      #baseExpression
+    |   increment                                               #incrementExpression
     |   expression '**' expression                              #powerExpression
     |   expression op=('*'|'/'|'%') expression                  #multiplicationExpression
     |   expression op=('+'|'-') expression                      #additionExpression
@@ -36,7 +37,7 @@ expression
     |   length                                                  #lengthExpression
     |   REAL                                                    #realExpression
     |   STRING                                                  #stringExpression
-    |   BOOLEAN                                                 #booleanExpression
+    |   boolean                                                 #booleanExpression
     |   IDENTIFIER                                              #identifierExpression
     ;
 assignment
@@ -77,4 +78,18 @@ index
     ;
 length
     :   IDENTIFIER LENGTH
+    ;
+increment
+    :   prefixIncrement
+    |   postfixIncrement
+    ;
+prefixIncrement
+    :   op=('++'|'--') IDENTIFIER
+    ;
+postfixIncrement
+    :   IDENTIFIER op=('++'|'--')
+    ;
+boolean
+    :   'true'
+    |   'false'
     ;
