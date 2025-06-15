@@ -104,6 +104,11 @@ public final class NumberData extends Data<Double> {
     }
 
     @Override
+    public Data<?> positive() {
+        return this;
+    }
+
+    @Override
     public Data<?> negative() {
         return new NumberData(-getValue());
     }

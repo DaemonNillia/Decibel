@@ -144,7 +144,7 @@ public class EvalVisitor extends DecibelParserBaseVisitor<Data<?>> {
         var op = ctx.op.getType();
         return switch (op) {
             case DecibelLexer.NOT -> data.not();
-            case DecibelLexer.ADD -> data;
+            case DecibelLexer.ADD -> data.positive();
             case DecibelLexer.SUBTRACT -> data.negative();
             default -> new NullData();
         };
@@ -218,13 +218,16 @@ public class EvalVisitor extends DecibelParserBaseVisitor<Data<?>> {
         String id = ctx.IDENTIFIER().getText();
         Data<?> data = new NullData();
 
+        // Check if the identifer of the call is a built in function
         if (builtInFunctions.containsKey(id)) {
+            // Use the paramters for the built in function
             ArrayList<Data<?>> args = new ArrayList<>();
             for (int i = 0; i < ctx.actualParameters().expression().size(); i++) {
                 args.add(visit(ctx.actualParameters().expression(i)));
             }
             data = builtInFunctions.get(id).call(args);
         } else {
+            // Use the paramters for the user defined function
             var function = (FunctionData) findVariable(id);
 
             nameSpace.push(new HashMap<String, Data<?>>());
